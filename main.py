@@ -14,7 +14,7 @@ def extract_columns(query: str) -> List[str]:
     """
     Extract all columns from a query SQL
 
-    :query: The query SQL
+    :query: The query SQL.
     :return: List of columns
     """
     if select := re.match(SELECT_SQL_REGEX, query):
