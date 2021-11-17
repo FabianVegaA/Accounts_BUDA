@@ -1,11 +1,13 @@
+import argparse
 import re
 import sqlite3
-from typing import Any, List, Optional, Tuple
 import sys
-import pandas as pd
-import argparse
+from typing import Any, List, Optional, Tuple
 
-from constants import ALIAS_SQL_REGEX, COLS_SELECT_REGEX, QUERIES, SELECT_SQL_REGEX
+import pandas as pd
+
+from constants import (ALIAS_SQL_REGEX, COLS_SELECT_REGEX, QUERIES,
+                       SELECT_SQL_REGEX)
 
 
 def extract_columns(query: str) -> List[str]:
