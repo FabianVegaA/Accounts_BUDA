@@ -1,8 +1,9 @@
 import re
 import sqlite3
-from typing import Any, List, Tuple
+from typing import Any, List, Optional, Tuple
 import sys
 import pandas as pd
+import argparse
 
 from constants import ALIAS_SQL_REGEX, COLS_SELECT_REGEX, QUERIES, SELECT_SQL_REGEX
 
@@ -70,14 +71,35 @@ def execute_query(db: str, *querys: Tuple[str, str]) -> None:
         print(pd.DataFrame(execute_sql(db, query), columns=cols))
 
 
-def main(*args: Any) -> None:
-    filename = args[0]
-    content_file = read_file(filename)
-    db = filename.replace(".sql", ".sqlite3")
-    execute_sql(db, content_file, long_query=True)
+def main(filename: Optional[str], execute: bool, name_db: Optional[str] = None) -> None:
+    if not name_db and not filename:
+        raise ValueError("You must specify a filename or a database name")
 
-    execute_query(db, *QUERIES)
+    if not name_db:
+        name_db = filename.replace(".sql", ".sqlite3")
+
+    if execute and filename:
+        content_file = read_file(filename)
+        execute_sql(name_db, content_file, long_query=True)
+
+    execute_query(name_db, *QUERIES)
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+
+    parser = argparse.ArgumentParser(description="Execute SQL code")
+
+    parser.add_argument("-f", "--filename", type=str, help="File to execute")
+    parser.add_argument("-d", "--database", type=str, help="Name of database")
+
+    parser.add_argument(
+        "-n",
+        "--nexecute",
+        action="store_false",
+        default=True,
+        help="No execute created database",
+    )
+
+    args = parser.parse_args(sys.argv[1:])
+
+    main(args.filename, args.nexecute, args.database)
